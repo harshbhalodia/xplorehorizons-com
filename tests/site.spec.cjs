@@ -5,6 +5,41 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const configSource = fs.readFileSync(path.join(root, "assets", "config.js"), "utf8");
 const consentKey = "xh-analytics-consent";
+const endpoint = "https://script.google.com/macros/s/XploreTestEndpoint/exec";
+
+async function configureForms(page, url = endpoint) {
+  await page.route("**/assets/config.js", (route) => route.fulfill({
+    contentType: "text/javascript",
+    body: configSource.replace(/enquiryEndpoint: "[^"]*"/, `enquiryEndpoint: ${JSON.stringify(url)}`),
+  }));
+}
+
+async function fillEnquiry(page, audience = "partner") {
+  const form = page.locator(`#${audience}-enquiry`);
+  await form.locator("[name=name]").fill("Example Person");
+  await form.locator("[name=email]").fill("person@example.com");
+  if (audience === "partner") {
+    await form.locator("[name=company]").fill("Example Company");
+    await form.locator("[name=relationship]").selectOption("As a client");
+    await form.locator("[name=focus]").selectOption("AI-enabled workflows");
+    await form.locator("[name=outcome]").fill("We want to simplify a repetitive workflow and make our platform more reliable.");
+  } else {
+    await form.locator("[name=location]").fill("Canada / Eastern Time");
+    await form.locator("[name=engagement]").selectOption("Open to either");
+    await form.locator('[name=skills][value="Workflow automation"]').check();
+    await form.locator("[name=story]").fill("I worked with a team to diagnose a difficult workflow and build a more reliable process.");
+  }
+  await form.locator("[name=consent]").check();
+  return form;
+}
+
+async function acknowledge(route, result) {
+  await route.fulfill({
+    contentType: "application/json",
+    headers: { "Access-Control-Allow-Origin": "*" },
+    body: JSON.stringify(result),
+  });
+}
 
 async function dismissAnalytics(page) {
   await page.getByRole("button", { name: "No thanks", exact: true }).click();
@@ -78,54 +113,54 @@ test("mobile navigation opens, closes after a link, and supports Escape", async 
   await expect(menu).toHaveAttribute("aria-expanded", "false");
 });
 
-test("form placeholders are honest, dismissible, and restore focus", async ({ page }) => {
+test("unconnected on-site forms disable sending, offer email, and restore focus", async ({ page }) => {
+  await configureForms(page, "");
   await page.goto("/");
   await dismissAnalytics(page);
   const partner = page.locator(".hero [data-form=partner]");
   await partner.click();
   await expect(page.getByRole("dialog")).toBeVisible();
-  await expect(page.getByRole("dialog")).toContainText("No information has been collected");
+  await expect(page.getByRole("dialog")).toContainText("Nothing entered here will be sent");
+  await expect(page.locator("#partner-enquiry [type=submit]")).toBeDisabled();
+  await expect(page.getByRole("dialog").getByRole("link", { name: "harshkumar.bhalodia@gmail.com" }).first()).toHaveAttribute("href", "mailto:harshkumar.bhalodia@gmail.com");
   await page.keyboard.press("Escape");
   await expect(partner).toBeFocused();
   await page.locator(".workforce-card [data-form=workforce]").click();
   await expect(page.getByRole("dialog")).toContainText("Your next chapter");
-  await page.getByRole("button", { name: "Got it" }).click();
+  await page.getByRole("button", { name: "Close enquiry form", exact: true }).click();
   await expect(page.getByRole("dialog")).not.toBeVisible();
 });
 
-test("configured forms open safe responder URLs without submitting data", async ({ page }) => {
-  await page.route("**/assets/config.js", (route) => route.fulfill({
-    contentType: "text/javascript",
-    body: configSource.replace('partnerFormUrl: ""', 'partnerFormUrl: "https://forms.gle/PartnerTest123"')
-      .replace('workforceFormUrl: ""', 'workforceFormUrl: "https://docs.google.com/forms/d/e/Test123/viewform"'),
-  }));
+test("all enquiry buttons stay on site and disclose no form-provider branding", async ({ page, context }) => {
+  await configureForms(page);
   await page.goto("/");
+  await dismissAnalytics(page);
   for (const audience of ["partner", "workforce"]) {
     const links = page.locator(`[data-form=${audience}]`);
     for (const link of await links.all()) {
-      await expect(link).toHaveAttribute("target", "_blank");
-      await expect(link).toHaveAttribute("rel", "noopener noreferrer");
-      await expect(link.locator(".sr-only")).toHaveText("(opens Google Forms in a new tab)");
-      if (await link.isVisible()) await expect(link).toHaveAccessibleName(/opens Google Forms in a new tab/);
-      expect(await link.getAttribute("href")).toMatch(/^https:\/\/(forms.gle|docs.google.com)/);
+      await expect(link).toHaveAttribute("href", "#connect");
+      await expect(link).not.toHaveAttribute("target");
+      await expect(link).toHaveAttribute("aria-haspopup", "dialog");
     }
-    await expect(page.locator(`[data-form-note=${audience}]`)).toHaveText("Opens Google Forms in a new tab.");
+    await page.locator(`.connect-card [data-form=${audience}]`).click();
+    await expect(page.locator(`#${audience}-enquiry`)).toBeVisible();
+    await expect(page.locator(`#${audience}-enquiry [type=submit]`)).toBeEnabled();
+    await expect(page.getByRole("dialog")).not.toContainText("Google");
+    await page.getByRole("button", { name: "Close enquiry form", exact: true }).click();
   }
+  expect(context.pages()).toHaveLength(1);
 });
 
-for (const url of ["javascript:alert(1)", "https://docs.google.com/forms/d/Test/edit", "https://forms.gle.evil.example/Test"]) {
-  test(`rejects unsafe or non-responder form URL: ${url}`, async ({ page }) => {
+for (const url of ["javascript:alert(1)", "https://script.google.com/macros/s/Test/dev", "https://script.google.com.evil.example/macros/s/Test/exec"]) {
+  test(`rejects unsafe or non-deployed endpoint: ${url}`, async ({ page }) => {
     const errors = [];
     page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
-    await page.route("**/assets/config.js", (route) => route.fulfill({
-      contentType: "text/javascript",
-      body: configSource.replace('partnerFormUrl: ""', `partnerFormUrl: "${url}"`),
-    }));
+    await configureForms(page, url);
     await page.goto("/");
     await dismissAnalytics(page);
     await page.locator(".hero [data-form=partner]").click();
-    await expect(page.getByRole("dialog")).toContainText("temporarily unavailable");
-    expect(errors.some((message) => message.includes("invalid form URL"))).toBe(true);
+    await expect(page.locator("#partner-enquiry [type=submit]")).toBeDisabled();
+    expect(errors.some((message) => message.includes("endpoint configuration is invalid"))).toBe(true);
   });
 }
 
@@ -216,32 +251,32 @@ test("blocked preference storage does not break navigation or enquiry dialogs", 
   await expect(page.getByRole("dialog")).toBeVisible();
 });
 
-test("production tracks configured form opens, never placeholder clicks or duplicate page views", async ({ page, context }) => {
+test("production tracks only form openings and confirmed submissions, with no answers or duplicate page views", async ({ page }) => {
   const requests = await mockProduction(page);
-  await page.route("**/assets/config.js", (route) => route.fulfill({
-    contentType: "text/javascript",
-    body: configSource.replace('partnerFormUrl: ""', 'partnerFormUrl: "https://forms.gle/PartnerTest123"'),
-  }));
-  await context.route("https://forms.gle/**", (route) => route.fulfill({
-    contentType: "text/html", body: "<title>Local form stub</title>",
-  }));
+  await configureForms(page);
+  await page.route(endpoint, (route) => {
+    const payload = JSON.parse(new URLSearchParams(route.request().postData()).get("payload"));
+    return acknowledge(route, { ok: true, requestId: payload.requestId });
+  });
   await page.goto("https://xplorehorizons.com/");
   await page.getByRole("button", { name: "Accept analytics", exact: true }).click();
   await expect.poll(() => requests.length).toBe(1);
   await page.getByRole("button", { name: "Cookie preferences", exact: true }).click();
   await page.getByRole("button", { name: "Accept analytics", exact: true }).click();
-  const popupPromise = page.waitForEvent("popup");
   await page.locator(".hero [data-form=partner]").click();
-  const popup = await popupPromise;
-  await expect(popup).toHaveTitle("Local form stub");
-  await popup.close();
-  await page.locator(".workforce-card [data-form=workforce]").click();
-  await expect(page.getByRole("dialog")).toBeVisible();
+  const form = await fillEnquiry(page);
+  await form.getByRole("button", { name: "Start a conversation" }).click();
+  await expect(form.locator(".form-success")).toBeVisible();
   const events = await page.evaluate(() => window.dataLayer.map((entry) => Array.from(entry)).filter((entry) => entry[0] === "event"));
   expect(events.filter((entry) => entry[1] === "page_view")).toHaveLength(1);
   expect(events.filter((entry) => entry[1] === "contact_form_open")).toEqual([
     ["event", "contact_form_open", { audience: "partner" }],
   ]);
+  expect(events.filter((entry) => entry[1] === "contact_form_submit")).toEqual([
+    ["event", "contact_form_submit", { audience: "partner" }],
+  ]);
+  expect(JSON.stringify(events)).not.toContain("person@example.com");
+  expect(JSON.stringify(events)).not.toContain("requestId");
   expect(requests).toHaveLength(1);
 });
 
@@ -253,6 +288,7 @@ test("reduced-motion preference disables decorative motion", async ({ page }) =>
 });
 
 test("home, selected services, dialog, and privacy pass automated WCAG AA checks", async ({ page }) => {
+  await configureForms(page);
   await page.goto("/");
   const audit = async () => {
     const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
@@ -271,6 +307,181 @@ test("home, selected services, dialog, and privacy pass automated WCAG AA checks
   await audit();
   await page.locator(".hero [data-form=partner]").click();
   await audit();
+  await page.getByRole("button", { name: "Close enquiry form", exact: true }).click();
+  await page.locator(".workforce-card [data-form=workforce]").click();
+  await audit();
+  await page.getByRole("button", { name: "Close enquiry form", exact: true }).click();
   await page.goto("/privacy.html");
   await audit();
+});
+
+for (const audience of ["partner", "workforce"]) {
+  test(`${audience} submits on site and shows success only after a matching acknowledgement`, async ({ page, context }) => {
+    await configureForms(page);
+    const submissions = [];
+    let release;
+    const gate = new Promise((resolve) => { release = resolve; });
+    await page.route(endpoint, async (route) => {
+      expect(route.request().method()).toBe("POST");
+      const payload = JSON.parse(new URLSearchParams(route.request().postData()).get("payload"));
+      submissions.push(payload);
+      await gate;
+      await acknowledge(route, { ok: true, requestId: payload.requestId });
+    });
+    await page.goto("/");
+    await dismissAnalytics(page);
+    await page.locator(`.connect-card [data-form=${audience}]`).click();
+    const form = await fillEnquiry(page, audience);
+    await form.locator("[type=submit]").click();
+    await expect.poll(() => submissions.length).toBe(1);
+    await expect(form.locator(".form-success")).toBeHidden();
+    await expect(form.locator("[type=submit]")).toBeDisabled();
+    release();
+    await expect(form.locator(".form-success")).toBeVisible();
+    await expect(form.locator(".receipt-reference")).toHaveText(submissions[0].requestId);
+    expect(submissions[0].audience).toBe(audience);
+    expect(submissions[0].consent).toBe(true);
+    expect(submissions[0].privacyVersion).toBe("2026-10-27");
+    expect(context.pages()).toHaveLength(1);
+    await expect(page).toHaveURL("http://127.0.0.1:4173/");
+  });
+}
+
+test("network failures preserve the draft and reuse its reference on retry", async ({ page }) => {
+  await configureForms(page);
+  const submissions = [];
+  await page.route(endpoint, async (route) => {
+    const payload = JSON.parse(new URLSearchParams(route.request().postData()).get("payload"));
+    submissions.push(payload);
+    if (submissions.length === 1) return route.abort("failed");
+    await acknowledge(route, { ok: true, requestId: payload.requestId });
+  });
+  await page.goto("/");
+  await dismissAnalytics(page);
+  await page.locator(".hero [data-form=partner]").click();
+  const form = await fillEnquiry(page);
+  await form.locator("[type=submit]").click();
+  await expect(form.locator(".form-status")).toContainText("couldn't confirm delivery");
+  await expect(form.locator(".form-success")).toBeHidden();
+  await expect(form.locator("[name=email]")).toHaveValue("person@example.com");
+  await expect(form.locator("[name=email]")).toBeDisabled();
+  await page.getByRole("button", { name: "Close enquiry form", exact: true }).click();
+  await page.locator(".hero [data-form=partner]").click();
+  await form.getByRole("button", { name: "Check / retry delivery" }).click();
+  await expect(form.locator(".form-success")).toBeVisible();
+  expect(submissions).toHaveLength(2);
+  expect(submissions[1]).toEqual(submissions[0]);
+});
+
+test("server rejection keeps the draft editable and never shows success", async ({ page }) => {
+  await configureForms(page);
+  await page.route(endpoint, (route) => acknowledge(route, { ok: false, code: "invalid", field: "email" }));
+  await page.goto("/");
+  await dismissAnalytics(page);
+  await page.locator(".hero [data-form=partner]").click();
+  const form = await fillEnquiry(page);
+  await form.locator("[type=submit]").click();
+  await expect(form.locator(".form-status")).toContainText("not accepted");
+  await expect(form.locator("[name=email]")).toBeEnabled();
+  await expect(form.locator("[name=email]")).toHaveValue("person@example.com");
+  await expect(form.locator(".form-success")).toBeHidden();
+});
+
+test("a 45-second timeout shows unconfirmed delivery and preserves the same draft", async ({ page }) => {
+  await configureForms(page);
+  await page.clock.install();
+  await page.route(endpoint, () => {});
+  await page.goto("/");
+  await dismissAnalytics(page);
+  await page.locator(".hero [data-form=partner]").click();
+  const form = await fillEnquiry(page);
+  const request = page.waitForRequest(endpoint);
+  await form.locator("[type=submit]").click();
+  await request;
+  await page.clock.fastForward(45001);
+  await expect(form.locator(".form-status")).toContainText("couldn't confirm delivery");
+  await expect(form.locator("[name=email]")).toHaveValue("person@example.com");
+  await expect(form.locator(".form-success")).toBeHidden();
+});
+
+test("mismatched acknowledgement is treated as unconfirmed, not success", async ({ page }) => {
+  await configureForms(page);
+  await page.route(endpoint, (route) => acknowledge(route, { ok: true, requestId: "unrelated" }));
+  await page.goto("/");
+  await dismissAnalytics(page);
+  await page.locator(".hero [data-form=partner]").click();
+  const form = await fillEnquiry(page);
+  await form.locator("[type=submit]").click();
+  await expect(form.locator(".form-status")).toContainText("couldn't confirm delivery");
+  await expect(form.locator(".form-success")).toBeHidden();
+});
+
+test("client validation blocks blank context, bad email, missing consent, and missing strengths", async ({ page }) => {
+  await configureForms(page);
+  const submissions = [];
+  await page.route(endpoint, (route) => { submissions.push(route.request().postData()); return route.abort(); });
+  await page.goto("/");
+  await dismissAnalytics(page);
+  await page.locator(".hero [data-form=partner]").click();
+  let form = await fillEnquiry(page);
+  for (const [field, value] of [["email", "person@invalid"], ["outcome", " ".repeat(40)]]) {
+    await form.locator(`[name=${field}]`).fill(value);
+    await form.locator("[type=submit]").click();
+    expect(await form.locator(`[name=${field}]`).evaluate((input) => input.validity.valid)).toBe(false);
+    form = await fillEnquiry(page);
+  }
+  await form.locator("[name=consent]").uncheck();
+  await form.locator("[type=submit]").click();
+  expect(submissions).toHaveLength(0);
+  await page.getByRole("button", { name: "Close enquiry form", exact: true }).click();
+  await page.locator(".workforce-card [data-form=workforce]").click();
+  form = await fillEnquiry(page, "workforce");
+  await form.locator('[name=skills][value="Workflow automation"]').uncheck();
+  await form.locator("[type=submit]").click();
+  expect(await form.locator("[name=skills]").first().evaluate((input) => input.validity.valid)).toBe(false);
+  expect(submissions).toHaveLength(0);
+});
+
+test("service calls to action preselect the matching enquiry focus", async ({ page }) => {
+  await configureForms(page);
+  await page.goto("/");
+  await dismissAnalytics(page);
+  await page.locator("#tab-cost").click();
+  await page.locator("#journey-cost [data-form=partner]").click();
+  await expect(page.locator("#partner-focus")).toHaveValue("AI cost and planning");
+});
+
+for (const width of [320, 390, 768, 1440]) {
+  test(`both native forms fit and remain usable at ${width}px`, async ({ page }) => {
+    await configureForms(page);
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/");
+    await dismissAnalytics(page);
+    for (const audience of ["partner", "workforce"]) {
+      await page.locator(`.connect-card [data-form=${audience}]`).click();
+      expect(await page.locator("#form-dialog").evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+      await expect(page.locator(`#${audience}-enquiry [type=submit]`)).toBeEnabled();
+      await page.keyboard.press("Escape");
+    }
+  });
+}
+
+test("native field names and option values match the setup script schema", async ({ page }) => {
+  const vm = require("node:vm");
+  const source = fs.readFileSync(path.join(root, "google-apps-script", "Code.gs"), "utf8");
+  const schema = vm.runInNewContext(source + "\nJSON.stringify(XH.forms)");
+  await page.goto("/");
+  for (const [audience, definition] of Object.entries(JSON.parse(schema))) {
+    const form = page.locator(`#${audience}-enquiry`);
+    for (const field of definition.fields) {
+      const inputs = form.locator(`[name="${field.key}"]`);
+      expect(await inputs.count()).toBe(field.type === "checkbox" ? field.options.length : 1);
+      if (field.options) {
+        const options = field.type === "checkbox"
+          ? await inputs.evaluateAll((elements) => elements.map((element) => element.value))
+          : await inputs.locator("option").evaluateAll((elements) => elements.map((element) => element.value).filter(Boolean));
+        expect(options).toEqual(field.options);
+      }
+    }
+  }
 });

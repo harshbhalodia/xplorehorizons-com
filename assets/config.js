@@ -1,10 +1,10 @@
 "use strict";
 
 window.XH_CONFIG = Object.freeze({
-  // Replace the empty strings with the published responder links, not editor links.
-  // Example: partnerFormUrl: "https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform"
-  partnerFormUrl: "",
-  workforceFormUrl: "",
+  // Deploy google-apps-script/Code.gs, then paste the public /exec URL here.
+  // Leave blank until setup and deployment are complete; sending stays disabled.
+  enquiryEndpoint: "",
+  enquiryPrivacyVersion: "2026-10-27",
   analyticsMeasurementId: "G-53C3364357",
   analyticsHosts: ["xplorehorizons.com", "www.xplorehorizons.com"],
 });

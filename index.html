@@ -24,6 +24,7 @@
   </script>
   <script src="assets/config.js" defer></script>
   <script src="assets/site.js" defer></script>
+  <script src="assets/forms.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -242,18 +243,18 @@
             <h3>Bring your ambition.<br>We'll bring our best.</h3>
             <p>Tell us what you're building, improving, or working through. Let's find the right way forward, together.</p>
             <a class="button button-light" href="#connect" data-form="partner">Partner with us <span aria-hidden="true">&#8599;</span></a>
-            <span class="form-note" data-form-note="partner">Enquiry form coming soon.</span>
+            <span class="form-note">A clear starting point. A conversation that matters.</span>
           </article>
           <article class="connect-card workforce-card">
             <span class="card-kicker">FOR EMPLOYEES &amp; CONTRACTORS <span aria-hidden="true">+</span></span>
             <h3>Do meaningful work.<br>Keep growing.</h3>
             <p>Bring your curiosity, your craft, and your drive to make things work. Build what's next with people who care.</p>
             <a class="button" href="#connect" data-form="workforce">Join our Workforce <span aria-hidden="true">&#8599;</span></a>
-            <span class="form-note" data-form-note="workforce">Expression-of-interest form coming soon.</span>
+            <span class="form-note">Your strengths. Your ambitions. Your next chapter.</span>
           </article>
         </div>
-        <p class="contact-privacy">When connected, our enquiry forms open in Google Forms. Share only what's needed to start a conversation, never credentials or confidential project data. <a href="privacy.html">Privacy details</a>.</p>
-        <noscript><p class="noscript-note">JavaScript is off. Form links and analytics preferences are unavailable; analytics is not loaded. Please enable JavaScript to check whether our enquiry forms are connected.</p></noscript>
+        <p class="contact-privacy">A direct conversation, without the runaround. Share only what's needed to get started, never credentials or confidential project data. <a href="privacy.html">Your privacy matters</a>.</p>
+        <noscript><p class="noscript-note">JavaScript is off. To make an enquiry, email <a href="mailto:harshkumar.bhalodia@gmail.com">harshkumar.bhalodia@gmail.com</a>. Analytics is not loaded.</p></noscript>
       </div>
     </section>
   </main>
@@ -274,13 +275,78 @@
     <div class="cookie-actions"><button class="button button-small" type="button" data-consent="granted">Accept analytics</button><button class="button button-small button-outline" type="button" data-consent="denied">No thanks</button></div>
   </aside>
   <p class="sr-only" role="status" id="site-status"></p>
-  <dialog id="form-dialog" aria-labelledby="form-dialog-title" aria-describedby="form-dialog-description">
-    <button class="dialog-close" type="button" data-close-dialog aria-label="Close enquiry message">&#215;</button>
-    <span class="dialog-icon" aria-hidden="true">&#8599;</span>
-    <p class="eyebrow">A GOOD CONVERSATION IS WORTH PREPARING FOR</p>
-    <h2 id="form-dialog-title">Let's connect soon.</h2>
-    <p id="form-dialog-description">Our enquiry form is being prepared. Please check back soon. No information has been collected or submitted.</p>
-    <button class="button" type="button" data-close-dialog>Got it <span aria-hidden="true">&#8594;</span></button>
+  <dialog id="form-dialog" class="enquiry-dialog" aria-labelledby="form-dialog-title" aria-describedby="form-dialog-description">
+    <div class="enquiry-layout">
+      <aside class="enquiry-intro">
+        <img src="assets/logo.svg" alt="" width="44" height="44">
+        <p class="eyebrow">A LITTLE CONTEXT.<br>A MEANINGFUL NEXT STEP.</p>
+        <h2 id="form-dialog-title">Let's move<br>something forward.</h2>
+        <p id="form-dialog-description">Start with what matters to you. We'll bring curiosity, practical thinking, and a shared sense of ownership.</p>
+        <div class="enquiry-promises"><span>Real people. Clear accountability.</span><span>Your information, treated with care.</span><span>No obligation. No unnecessary steps.</span></div>
+        <div class="enquiry-contact"><span>Prefer a direct note?</span><a href="mailto:harshkumar.bhalodia@gmail.com">harshkumar.bhalodia@gmail.com</a></div>
+      </aside>
+      <div class="enquiry-main">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Close enquiry form">&#215;</button>
+        <div class="form-unavailable" role="status" hidden>Online submissions are being connected. Please email <a href="mailto:harshkumar.bhalodia@gmail.com">harshkumar.bhalodia@gmail.com</a> in the meantime. Nothing entered here will be sent.</div>
+        <form id="partner-enquiry" data-enquiry="partner" method="post" action="./#connect" hidden>
+          <div class="form-content">
+            <p class="form-heading">Tell us what you have in mind.</p>
+            <p class="form-guidance">A useful first conversation starts here. Fields marked * are required.</p>
+            <fieldset class="enquiry-fields" disabled>
+              <legend class="sr-only">Partnership enquiry details</legend>
+              <div class="field-row">
+                <div class="field"><label for="partner-name">Your name <span aria-hidden="true">*</span></label><input id="partner-name" name="name" autocomplete="name" maxlength="100" required placeholder="How should we address you?"></div>
+                <div class="field"><label for="partner-email">Email address <span aria-hidden="true">*</span></label><input id="partner-email" name="email" type="email" autocomplete="email" maxlength="254" required placeholder="you@company.com"></div>
+              </div>
+              <div class="field"><label for="partner-company">Company or organization <span aria-hidden="true">*</span></label><input id="partner-company" name="company" autocomplete="organization" maxlength="160" required placeholder="The team behind the ambition"></div>
+              <div class="field-row">
+                <div class="field"><label for="partner-relationship">Work with us <span aria-hidden="true">*</span></label><select id="partner-relationship" name="relationship" required><option value="">Choose a starting point</option><option>As a client</option><option>As a delivery partner</option><option>Let's explore</option></select></div>
+                <div class="field"><label for="partner-timeline">Your timing <span class="optional">(optional)</span></label><select id="partner-timeline" name="timeline"><option value="">Select if you know</option><option>Exploring possibilities</option><option>Within the next 3 months</option><option>A defined deadline</option><option>Let's discuss</option></select></div>
+              </div>
+              <div class="field"><label for="partner-focus">Where should we start? <span aria-hidden="true">*</span></label><select id="partner-focus" name="focus" required><option value="">What would make the biggest difference?</option><option>Choosing a new tool</option><option>AI-enabled workflows</option><option>A new project or initiative</option><option>AI cost and planning</option><option>An aligned consulting team</option><option>Platform reliability</option><option>Something else</option></select></div>
+              <div class="field"><label for="partner-outcome">What would meaningful progress look like? <span aria-hidden="true">*</span></label><textarea id="partner-outcome" name="outcome" rows="4" minlength="30" maxlength="3000" required aria-describedby="partner-outcome-hint" placeholder="The challenge, the people it affects, and what you'd like to make better."></textarea><span class="field-hint" id="partner-outcome-hint">30-3,000 characters. High-level context only; no confidential details.</span></div>
+              <div hidden aria-hidden="true"><label for="partner-website">Leave this field empty</label><input id="partner-website" name="website" tabindex="-1" autocomplete="off"></div>
+              <label class="consent-label" for="partner-consent"><input id="partner-consent" name="consent" type="checkbox" required><span>I agree that Xplore Horizons Inc. may use these details to respond to my enquiry, as described in the <a href="privacy.html" target="_blank" rel="noopener">privacy notice<span class="sr-only"> (opens in a new tab)</span></a>. <span aria-hidden="true">*</span></span></label>
+            </fieldset>
+            <div class="form-submit-row"><button class="button" type="submit" disabled>Start a conversation <span aria-hidden="true">&#8599;</span></button><span class="submit-note">Thoughtful next steps.<br>No instant-response promises.</span></div>
+          </div>
+          <p class="form-status" role="status" tabindex="-1"></p>
+          <div class="form-success" hidden><span class="success-mark" aria-hidden="true">&#10003;</span><h3>A good start.<br>We'll take it from here.</h3><p>Your enquiry has been recorded. We'll review the context and follow up by email when we have a relevant next step.</p><p class="receipt-label">YOUR ENQUIRY REFERENCE</p><code class="receipt-reference"></code><button class="button" type="button" data-close-dialog>Back to exploring <span aria-hidden="true">&#8594;</span></button></div>
+        </form>
+        <form id="workforce-enquiry" data-enquiry="workforce" method="post" action="./#connect" hidden>
+          <div class="form-content">
+            <p class="form-heading">Good work starts with your story.</p>
+            <p class="form-guidance">Tell us a little about your craft and curiosity. Fields marked * are required.</p>
+            <fieldset class="enquiry-fields" disabled>
+              <legend class="sr-only">Workforce enquiry details</legend>
+              <div class="field-row">
+                <div class="field"><label for="workforce-name">Your name <span aria-hidden="true">*</span></label><input id="workforce-name" name="name" autocomplete="name" maxlength="100" required placeholder="How should we address you?"></div>
+                <div class="field"><label for="workforce-email">Email address <span aria-hidden="true">*</span></label><input id="workforce-email" name="email" type="email" autocomplete="email" maxlength="254" required placeholder="Where we can reach you"></div>
+              </div>
+              <div class="field"><label for="workforce-location">Country or region and time zone <span aria-hidden="true">*</span></label><input id="workforce-location" name="location" maxlength="120" required placeholder="For example, Canada / Eastern Time"></div>
+              <div class="field"><label for="workforce-engagement">The opportunity you're looking for <span aria-hidden="true">*</span></label><select id="workforce-engagement" name="engagement" required><option value="">Choose what works for you</option><option>Employee</option><option>Independent contractor</option><option>Open to either</option></select></div>
+              <fieldset class="skills-field"><legend>Your primary strengths <span aria-hidden="true">*</span></legend><p class="field-hint">Choose at least one. What do you enjoy getting hands-on with?</p><div class="skill-options">
+                <label><input type="checkbox" name="skills" value="AI and machine learning"><span>AI &amp; ML</span></label>
+                <label><input type="checkbox" name="skills" value="Workflow automation"><span>Automation</span></label>
+                <label><input type="checkbox" name="skills" value="Cloud and platforms"><span>Cloud &amp; platforms</span></label>
+                <label><input type="checkbox" name="skills" value="On-premises and hybrid"><span>On-premises &amp; hybrid</span></label>
+                <label><input type="checkbox" name="skills" value="Security and observability"><span>Security &amp; observability</span></label>
+                <label><input type="checkbox" name="skills" value="Solution design"><span>Solution design</span></label>
+                <label><input type="checkbox" name="skills" value="Hands-on troubleshooting"><span>Troubleshooting</span></label>
+                <label><input type="checkbox" name="skills" value="Project delivery"><span>Project delivery</span></label>
+              </div></fieldset>
+              <div class="field"><label for="workforce-story">A challenge you helped solve <span aria-hidden="true">*</span></label><textarea id="workforce-story" name="story" rows="4" minlength="30" maxlength="3000" required aria-describedby="workforce-story-hint" placeholder="What was the challenge? What did you try? What did you learn?"></textarea><span class="field-hint" id="workforce-story-hint">30-3,000 characters. Please leave out confidential client or employer information.</span></div>
+              <div class="field"><label for="workforce-portfolio">LinkedIn, portfolio, or GitHub URL <span class="optional">(optional)</span></label><input id="workforce-portfolio" name="portfolio" type="url" maxlength="500" placeholder="https://" aria-describedby="portfolio-hint"><span class="field-hint" id="portfolio-hint">A public link is enough. No document uploads needed.</span></div>
+              <div hidden aria-hidden="true"><label for="workforce-website">Leave this field empty</label><input id="workforce-website" name="website" tabindex="-1" autocomplete="off"></div>
+              <label class="consent-label" for="workforce-consent"><input id="workforce-consent" name="consent" type="checkbox" required><span>I agree that Xplore Horizons Inc. may use these details to respond about relevant work opportunities, as described in the <a href="privacy.html" target="_blank" rel="noopener">privacy notice<span class="sr-only"> (opens in a new tab)</span></a>. <span aria-hidden="true">*</span></span></label>
+            </fieldset>
+            <div class="form-submit-row"><button class="button" type="submit" disabled>Share your story <span aria-hidden="true">&#8599;</span></button><span class="submit-note">An expression of interest,<br>not a promise of placement.</span></div>
+          </div>
+          <p class="form-status" role="status" tabindex="-1"></p>
+          <div class="form-success" hidden><span class="success-mark" aria-hidden="true">&#10003;</span><h3>Great to meet<br>your ambition.</h3><p>Your expression of interest has been recorded. We'll review your experience and contact you by email when there is a relevant next step. This is not an offer of employment or a guarantee of placement.</p><p class="receipt-label">YOUR ENQUIRY REFERENCE</p><code class="receipt-reference"></code><button class="button" type="button" data-close-dialog>Back to exploring <span aria-hidden="true">&#8594;</span></button></div>
+        </form>
+      </div>
+    </div>
   </dialog>
 </body>
 </html>

@@ -5,8 +5,8 @@
   "description": "No-build static company website for Xplore Horizons Inc.",
   "scripts": {
     "dev": "node tools/serve.cjs",
-    "check": "node --check assets/config.js && node --check assets/site.js && node --check tools/serve.cjs",
-    "test": "playwright test",
+    "check": "node --check assets/config.js && node --check assets/site.js && node --check assets/forms.js && node --check tools/serve.cjs",
+    "test": "node --test tests/backend.test.cjs && playwright test",
     "render:social": "node tools/render-social.cjs"
   },
   "devDependencies": {

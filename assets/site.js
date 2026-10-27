@@ -228,68 +228,10 @@
   window[disableKey] = consent !== "granted";
   loadAnalytics();
 
-  const formUrls = {
-    partner: config.partnerFormUrl,
-    workforce: config.workforceFormUrl,
-  };
-  const validFormUrl = (value) => {
-    if (!value) return null;
-    try {
-      const url = new URL(value);
-      const shortLink = url.hostname === "forms.gle" && /^\/[a-zA-Z0-9_-]+\/?$/.test(url.pathname);
-      const longLink = url.hostname === "docs.google.com"
-        && /^\/forms\/(?:u\/\d+\/)?d\/(?:e\/)?[a-zA-Z0-9_-]+\/viewform$/.test(url.pathname);
-      if (url.protocol !== "https:" || url.username || url.password || url.port || (!shortLink && !longLink)) {
-        throw new Error("Use an HTTPS Google Forms responder URL ending in /viewform, or a forms.gle link.");
-      }
-      return url.href;
-    } catch (error) {
-      console.error("Xplore Horizons: invalid form URL configuration.", error);
-      return null;
-    }
-  };
-  const validatedForms = Object.fromEntries(
-    Object.entries(formUrls).map(([audience, url]) => [audience, validFormUrl(url)])
-  );
-  const dialog = document.querySelector("#form-dialog");
-  let formTrigger;
-  document.querySelectorAll("[data-form]").forEach((link) => {
-    const audience = link.dataset.form;
-    const url = validatedForms[audience];
-    if (url) {
-      link.href = url;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      const hint = document.createElement("span");
-      hint.className = "sr-only";
-      hint.textContent = " (opens Google Forms in a new tab)";
-      link.append(hint);
-      link.addEventListener("click", () => track("contact_form_open", { audience }));
-    } else {
-      link.addEventListener("click", (event) => {
-        if (!dialog) return;
-        event.preventDefault();
-        formTrigger = link;
-        document.querySelector("#form-dialog-title").textContent = audience === "workforce"
-          ? "Your next chapter is worth it." : "Let's connect soon.";
-        document.querySelector("#form-dialog-description").textContent = formUrls[audience]
-          ? "Our enquiry form is temporarily unavailable. Please try again later. No information has been collected or submitted."
-          : "Our enquiry form is being prepared. Please check back soon. No information has been collected or submitted.";
-        dialog.showModal();
-      });
+  document.addEventListener("xh:form-event", (event) => {
+    const { name, audience } = event.detail || {};
+    if (["contact_form_open", "contact_form_submit"].includes(name) && ["partner", "workforce"].includes(audience)) {
+      track(name, { audience });
     }
   });
-  document.querySelectorAll("[data-form-note]").forEach((note) => {
-    const audience = note.dataset.formNote;
-    if (validatedForms[audience]) note.textContent = "Opens Google Forms in a new tab.";
-    else if (formUrls[audience]) note.textContent = "Enquiry form temporarily unavailable.";
-  });
-  if (dialog) {
-    dialog.querySelectorAll("[data-close-dialog]").forEach((button) => {
-      button.addEventListener("click", () => dialog.close());
-    });
-    dialog.addEventListener("close", () => {
-      if (formTrigger) formTrigger.focus();
-    });
-  }
 })();
