@@ -2,7 +2,7 @@
 
 Visitors fill in a branded form on xplorehorizons.com. They do not leave the page or sign into Google. This script records their submission in the two supplied Google Forms and linked Google Sheets, then returns a confirmation to the website.
 
-**The script is prepared, not already deployed.** Running these steps requires the Google account that can edit both Forms.
+The website's deployed endpoint is configured in [assets/config.js](../assets/config.js). These instructions document the owner setup and deployment process; repeat them only when intentionally setting up or updating the service. Running setup requires the Google account that can edit both Forms.
 
 ## 1. Create your Apps Script project in Edge
 
