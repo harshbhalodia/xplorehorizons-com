@@ -1,0 +1,19 @@
+{
+  "name": "xplore-horizons-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "No-build static company website for Xplore Horizons Inc.",
+  "scripts": {
+    "dev": "node tools/serve.cjs",
+    "check": "node --check assets/config.js && node --check assets/site.js && node --check tools/serve.cjs",
+    "test": "playwright test",
+    "render:social": "node tools/render-social.cjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@axe-core/playwright": "^4.10.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

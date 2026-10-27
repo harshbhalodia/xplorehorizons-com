@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f8f9f5"/>
+  <g transform="translate(68 55)">
+    <rect width="60" height="60" rx="17" fill="#123f38"/>
+    <path d="M14 16h9l24 28h-9z" fill="#f8f9f5"/><path d="M37 16h10L23 44h-9z" fill="#c5dec9"/>
+    <path d="M11 31h38" stroke="#123f38" stroke-width="4"/><path d="M34 31h15" stroke="#ea7348" stroke-width="3"/>
+    <circle cx="46" cy="15" r="4" fill="#ea7348"/>
+  </g>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="145" y="82" font-size="26" fill="#173f37" font-weight="600" letter-spacing="-1">Xplore Horizons</text>
+    <text x="146" y="104" font-size="10" fill="#56665d" letter-spacing="2">INC. / TECHNOLOGY CONSULTING</text>
+    <text x="70" y="208" font-size="11" fill="#476b53" letter-spacing="3" font-weight="600">BIG IDEAS. REAL-WORLD IMPACT.</text>
+    <text x="65" y="301" font-size="77" fill="#173f37" font-weight="600" letter-spacing="-4">Less friction.</text>
+    <text x="65" y="389" font-size="77" fill="#476b53" font-weight="600" letter-spacing="-4">More forward<tspan fill="#d96539">.</tspan></text>
+    <text x="70" y="453" font-size="23" fill="#56665d">Practical AI. Thoughtful people. Lasting impact.</text>
+    <text x="70" y="560" font-size="16" fill="#173f37" letter-spacing="1">xplorehorizons.com</text>
+    <text x="1125" y="560" text-anchor="end" font-size="11" fill="#56665d" letter-spacing="2">NORTH AMERICA. FORWARD, TOGETHER.</text>
+  </g>
+  <g transform="translate(715 135)">
+    <path d="M0 300V150a190 190 0 0 1 380 0v150" fill="#e7ecdf"/>
+    <path d="M-18 300V150a208 208 0 0 1 416 0v150" fill="none" stroke="#d4dfca"/>
+    <circle cx="280" cy="100" r="57" fill="#ed9862"/>
+    <path d="m-20 282 210-105 220 110-210 105z" fill="#dae3d0"/>
+    <path d="m20 249 70-35 70 35v57l-70 35-70-35z" fill="#92ad8e"/>
+    <path d="m20 249 70-35 70 35-70 35z" fill="#e5ecd9"/>
+    <path d="m122 202 70-35 70 35v101l-70 35-70-35z" fill="#285548"/>
+    <path d="m122 202 70-35 70 35-70 35z" fill="#709780"/>
+    <path d="m224 155 70-35 70 35v105l-70 35-70-35z" fill="#a6bfa0"/>
+    <path d="m224 155 70-35 70 35-70 35z" fill="#edf1e3"/>
+    <path d="m61 249 30 15 101-51v-43l100-49" fill="none" stroke="#f8f9f5" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="m61 249 30 15 101-51v-43l100-49m-15 0 17-2-5 16" fill="none" stroke="#d96539" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="61" cy="249" r="6" fill="#f8f9f5" stroke="#d96539" stroke-width="3"/>
+  </g>
+  <path d="M70 508h1060" stroke="#dce2d7"/>
+</svg>

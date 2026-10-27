@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="560" viewBox="0 0 640 560" fill="none">
+  <title>People, AI, and platforms moving forward together</title>
+  <defs>
+    <linearGradient id="sky" x1="320" y1="70" x2="320" y2="475" gradientUnits="userSpaceOnUse"><stop stop-color="#dce7d9"/><stop offset="1" stop-color="#f0f2e9"/></linearGradient>
+    <linearGradient id="sun" x1="403" y1="75" x2="475" y2="200" gradientUnits="userSpaceOnUse"><stop stop-color="#f2ac73"/><stop offset="1" stop-color="#e97549"/></linearGradient>
+    <linearGradient id="pillar" x1="302" y1="221" x2="402" y2="407" gradientUnits="userSpaceOnUse"><stop stop-color="#51806a"/><stop offset="1" stop-color="#224d43"/></linearGradient>
+    <linearGradient id="glass" x1="99" y1="118" x2="542" y2="492" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#d4e2cc" stop-opacity=".12"/></linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+    <pattern id="grid" width="38" height="22" patternUnits="userSpaceOnUse" patternTransform="matrix(1 .48 -1 .48 335 256)"><path d="M38 0H0V22" stroke="#456d57" stroke-opacity=".13" stroke-width="1"/></pattern>
+  </defs>
+  <path d="M139 428V243a181 181 0 0 1 362 0v185" fill="url(#sky)"/>
+  <path d="M115 435V243a205 205 0 0 1 410 0v192" stroke="#cbd7c6" stroke-width="1"/>
+  <path d="M93 434V242a227 227 0 0 1 454 0v192" stroke="#dde3d5" stroke-width="1"/>
+  <circle cx="424" cy="146" r="61" fill="url(#sun)"/>
+  <path d="M140 242h362M140 265h362M140 288h362" stroke="#f5f5ec" stroke-width="1.5"/>
+  <path d="M79 402 323 279 576 402 332 526z" fill="#e2e8db"/>
+  <path d="M79 402 323 279 576 402 332 526z" fill="url(#grid)"/>
+  <ellipse cx="325" cy="421" rx="161" ry="37" fill="#315843" opacity=".12" filter="url(#shadow)"/>
+  <path d="m126 354 96-48 96 48v57l-96 49-96-49z" fill="#abc2a3"/>
+  <path d="m126 354 96 48v58l-96-49z" fill="#92ad8e"/>
+  <path d="m222 402 96-48v57l-96 49z" fill="#bbceb0"/>
+  <path d="m126 354 96-48 96 48-96 48z" fill="#e3ebd7"/>
+  <path d="m232 300 96-48 97 48v100l-97 48-96-48z" fill="url(#pillar)"/>
+  <path d="m328 348 97-48v100l-97 48z" fill="#285548"/>
+  <path d="m232 300 96-48 97 48-97 48z" fill="#709780"/>
+  <path d="m341 245 84-42 85 42v105l-85 43-84-43z" fill="#bed0b3"/>
+  <path d="m425 287 85-42v105l-85 43z" fill="#a6bfa0"/>
+  <path d="m341 245 84-42 85 42-85 42z" fill="#edf1e3"/>
+  <path d="m170 354 51 25 107-54v-51l96-48" stroke="#fafbf3" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m170 354 51 25 107-54v-51l96-48" stroke="#e77d50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m409 222 17 3-4 14" stroke="#e77d50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="171" cy="354" r="8" fill="#fbfcf5" stroke="#e77d50" stroke-width="3"/>
+  <circle cx="328" cy="307" r="8" fill="#fbfcf5" stroke="#e77d50" stroke-width="3"/>
+  <path d="m150 157 78-39 101 51-78 39z" fill="url(#glass)" stroke="#fff" stroke-opacity=".8"/>
+  <path d="m150 157 101 51v62l-101-50z" fill="url(#glass)" stroke="#fff" stroke-opacity=".6"/>
+  <path d="m251 208 78-39v62l-78 39z" fill="url(#glass)" stroke="#fff" stroke-opacity=".6"/>
+  <path d="m187 166 41-21 64 32-42 21z" stroke="#91aa8d"/>
+  <path d="m204 166 24-12 45 23-23 12z" fill="#285548" fill-opacity=".7"/>
+  <path d="M240 247v42" stroke="#8ba684" stroke-dasharray="3 5"/>
+  <g font-family="Arial, sans-serif" font-size="11" letter-spacing="1.5" fill="#244e43">
+    <rect x="54" y="274" width="122" height="36" rx="18" fill="#f9faf5" stroke="#d5dfce"/><circle cx="74" cy="292" r="4" fill="#e77d50"/><text x="86" y="296">YOUR PEOPLE</text>
+    <rect x="415" y="164" width="148" height="36" rx="18" fill="#f9faf5" stroke="#d5dfce"/><circle cx="435" cy="182" r="4" fill="#e77d50"/><text x="447" y="186">APPLIED AI</text>
+    <rect x="386" y="423" width="157" height="36" rx="18" fill="#f9faf5" stroke="#d5dfce"/><circle cx="406" cy="441" r="4" fill="#3b7059"/><text x="418" y="445">SOLID PLATFORMS</text>
+  </g>
+  <path d="M128 310v31m361-141v31m-56 192v-25" stroke="#829b79" stroke-dasharray="3 4"/>
+  <g stroke="#74916c" stroke-width="1.5"><path d="M80 191v14m-7-7h14M545 318v14m-7-7h14M337 78v10m-5-5h10"/></g>
+  <circle cx="101" cy="463" r="3" fill="#e77d50"/><circle cx="552" cy="248" r="3" fill="#64845a"/>
+</svg>

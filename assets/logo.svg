@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <title>Xplore Horizons symbol</title>
+  <rect width="80" height="80" rx="22" fill="#123f38"/>
+  <path d="M18 22h12l32 36H50z" fill="#f8f9f5"/>
+  <path d="M49 22h13L31 58H18z" fill="#c5dec9"/>
+  <path d="M15 41h50" stroke="#123f38" stroke-width="5"/>
+  <path d="M45 41h20" stroke="#ea7348" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="61" cy="20" r="5" fill="#ea7348"/>
+</svg>
